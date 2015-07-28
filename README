@@ -1,0 +1,77 @@
+This directory contains the macro for high content fcs. I have included
+the macro file (.lvb)  and also exported each module in the .lvb file
+as a basic (.bas) text file so they can be viewed and edited outside
+of the Zeiss VBA macro editor.
+
+The basic files are in the exported directory.
+
+The file for the macro is called ***.lvb. This is the file to load
+from the macro menu in AIM. When the VBA editor is opened the modules
+in this file can be viewed. The macro starts with the Main() procedure
+in Module1: when you click run on the macro menu, the Main() procedure
+is launched.
+
+Main() loads the form for the macro. Some of the controls on the form
+are not needed (I don't like to delete things, just in case). To get
+it to run, first click the "Mark Water" button that is near the buttom
+of the form. Then click "Test Plate" and the macro will (hopefully) start.
+
+The module rootInfo defines some global variables, but doesn't set any
+of them.
+
+The flow is as follows:
+---
+Main -> UserForm1
+press "Test Plate" -> test_plate_scan (in modControl)
+test_plate_scan -> scan_over_plate
+scan_over_plate -> scan_in_well
+scan_in_well -> ScanNewOverView in Module1
+scan_in_well -> FindCells in Module 1
+
+FindCells should call whatever external program you have to find cells
+and report the positions.
+
+FindCells -> testzoom (Module1)
+testzoom -> takefcs (Module1)
+
+testzoom also needs to call an external program to determine where to
+take the measurement.
+
+---
+
+Each time the stageis moved to a new position, within a well or to a
+different well, the procedure zautofocus is called to focus on the
+cover slip. 
+
+The function zfocusfcs is called prior to every zoomed up scan of a
+cell.
+
+Configurations are changed using the setTrack function.
+
+Configuration must be set up before running the macro. As written,
+three configurations with the following names are needed:
+1) focus - to focus on the cover slip. We use reflected light with PMTs
+to do this.
+2) overviewscan - to take the scan of the entire field of view.
+3) zoomscan - setting to take close-ups of cells. Using APDs.
+
+The code is written to detect when a configuration is using the
+APDs. If the APDs are in the path,the AOTF maximum power is reduced to
+10%.
+
+
+If you have any questions, don't hesitate to ask. I can be reached at
+cjw@stowers.org.
+
+
+
+
+
+
+
+
+
+
+
+
+ 
